@@ -314,7 +314,19 @@ var GoogleSpreadsheet = function( ss_key, auth_id, options ){
     });
     data_xml += '</entry>';
     self.makeFeedRequest( ["list", ss_key, worksheet_id], 'POST', data_xml, function(err, data, new_xml) {
+
+      //  Occasionally receiving a crash because data_xml is undefined.  Let's detect the error, and log some better error message.
+      if(new_xml === undefined || new_xml === null) {
+          return cb({
+          "location":"addRow",
+          "worksheet_id":worksheet_id,
+          "ss_key":ss_key,
+          "data":data
+        });
+      }
+
       if (err) return cb(err);
+
       var entries_xml = new_xml.match(/<entry[^>]*>([\s\S]*?)<\/entry>/g);
       var row = new SpreadsheetRow(self, data, entries_xml[0]);
       cb(null, row);
