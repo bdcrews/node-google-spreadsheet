@@ -318,7 +318,7 @@ var GoogleSpreadsheet = function( ss_key, auth_id, options ){
       //  Occasionally receiving a crash because data_xml is undefined.  Let's detect the error, and log some better error message.
       if(new_xml === undefined || new_xml === null) {
           return cb({
-          "location":"addRow",
+          "location":"addRow 1",
           "worksheet_id":worksheet_id,
           "ss_key":ss_key,
           "data":data
@@ -328,6 +328,16 @@ var GoogleSpreadsheet = function( ss_key, auth_id, options ){
       if (err) return cb(err);
 
       var entries_xml = new_xml.match(/<entry[^>]*>([\s\S]*?)<\/entry>/g);
+
+      //  Occasionally receiving a crash because data_xml is undefined.  Let's detect the error, and log some better error message.
+      if(entries_xml === undefined || entries_xml === null) {
+          return cb({
+          "location":"addRow 2",
+          "worksheet_id":worksheet_id,
+          "ss_key":ss_key,
+          "data":data
+        });
+      }
       var row = new SpreadsheetRow(self, data, entries_xml[0]);
       cb(null, row);
     });
